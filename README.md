@@ -2,6 +2,15 @@
 
 Create objects with callbacks from activity lifecycle.
 
+##Gradle
+
+    repositories {
+        maven{url "https://github.com/shaubert/maven-repo/raw/master/releases"}
+    }
+    dependencies {
+        compile 'com.shaubert.lifecycle.objects:library:1.0.0'
+    }
+
 ##How to use
 
 If you want to receive activity/fragment callbacks in your class you have several options:

@@ -1,2 +1,4 @@
-# lifecycle-objects
-Create objects with callbacks from activity lifecycle
+Lifecycle Objects
+-----------------
+
+Create objects with callbacks from activity lifecycle.

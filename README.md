@@ -8,8 +8,9 @@ Create objects with callbacks from activity lifecycle.
         maven{url "https://github.com/shaubert/maven-repo/raw/master/releases"}
     }
     dependencies {
-        compile 'com.shaubert.lifecycle.objects:library:1.0'
+        compile 'com.shaubert.lifecycle.objects:library:1.1'
     }
+
 
 ##How to use
 

@@ -13,6 +13,13 @@ public abstract class LifecycleDispatcherFragmentActivity extends FragmentActivi
     private LifecycleObjectsGroup lifecycleObjectsGroup = new LifecycleObjectsGroup();
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        lifecycleObjectsGroup.dispatchOnAttach();
+        lifecycleObjectsGroup.dispatchOnCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         lifecycleObjectsGroup.dispatchOnActivityResult(requestCode, resultCode, data);

@@ -1,13 +1,16 @@
 package com.shaubert.lifecycle.objects.dispatchers;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
 import com.shaubert.lifecycle.objects.LifecycleObjectsGroup;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public abstract class LifecycleDispatcherFragment extends Fragment implements LifecycleDelegate {
 
     private LifecycleObjectsGroup objectsGroup = new LifecycleObjectsGroup();
@@ -16,6 +19,7 @@ public abstract class LifecycleDispatcherFragment extends Fragment implements Li
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        objectsGroup.dispatchOnAttach();
         objectsGroup.dispatchOnCreate(savedInstanceState);
     }
 

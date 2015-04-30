@@ -16,6 +16,7 @@ public abstract class LifecycleDispatcherSupportDialogFragment extends DialogFra
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        objectsGroup.dispatchOnAttach();
         objectsGroup.dispatchOnCreate(savedInstanceState);
     }
 

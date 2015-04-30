@@ -2,10 +2,38 @@ package com.shaubert.lifecycle.objects;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public class LifecycleBasedObject implements LifecycleDispatcher {
 
     private boolean paused = true;
+    private boolean attached = false;
+
+    @Override
+    public boolean isAttached() {
+        return attached;
+    }
+
+    @Override
+    public void dispatchOnAttach() {
+        attached = true;
+        onAttached();
+    }
+
+    public void onAttached() {
+
+    }
+
+    @Override
+    public void dispatchOnDetach() {
+        attached = false;
+        onDetached();
+    }
+
+    public void onDetached() {
+
+    }
 
     @Override
     public final void dispatchOnResume() {
@@ -44,26 +72,32 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
     }
 
     @Override
-    public final void dispatchOnCreate(Bundle savedInstanceState) {
+    public final void dispatchOnCreate(@Nullable Bundle savedInstanceState) {
+        Bundle stateBundle = null;
         if (savedInstanceState != null) {
-            Bundle stateBundle = savedInstanceState.getBundle(getBundleTag());
-            if (stateBundle != null) {
-                onRestoreInstanceState(stateBundle);
-            }
+            stateBundle = savedInstanceState.getBundle(getBundleTag());
+        }
+
+        onCreate(stateBundle);
+        if (stateBundle != null) {
+            onRestoreInstanceState(stateBundle);
         }
     }
 
-    protected void onRestoreInstanceState(Bundle stateBundle) {
+    protected void onRestoreInstanceState(@NonNull Bundle state) {
+    }
+
+    protected void onCreate(@Nullable Bundle state) {
     }
 
     @Override
-    public final void dispatchOnSaveInstanceState(Bundle outState) {
+    public final void dispatchOnSaveInstanceState(@NonNull Bundle outState) {
         Bundle bundle = new Bundle();
         onSaveInstanceState(bundle);
         outState.putBundle(getBundleTag(), bundle);
     }
 
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
     }
 
     protected String getBundleTag() {

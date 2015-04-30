@@ -25,6 +25,14 @@ After than you have to register your class instance in `LifecycleDelegate` with 
       private LifecycleObjectsGroup lifecycleObjectsGroup = new LifecycleObjectsGroup();
   
       @Override
+      protected void onPostCreate(Bundle savedInstanceState) {
+          super.onPostCreate(savedInstanceState);
+          lifecycleObjectsGroup.dispatchOnAttach();
+          lifecycleObjectsGroup.dispatchOnCreate(savedInstanceState);
+      }
+
+  
+      @Override
       protected void onActivityResult(int requestCode, int resultCode, Intent data) {
           super.onActivityResult(requestCode, resultCode, data);
           lifecycleObjectsGroup.dispatchOnActivityResult(requestCode, resultCode, data);
@@ -67,9 +75,9 @@ After than you have to register your class instance in `LifecycleDelegate` with 
 
 Now your class can handle this methods from activity/fragment
 
+    void onPostCreate(Bundle savedInstanceState) / onActivityCreated(Bundle savedInstanceState);
+    void onActivityResult(int requestCode, int resultCode, Intent data);
     void onResume();
     void onPause();
-    void onActivityResult(int requestCode, int resultCode, Intent data);
-    void onCreate(Bundle savedInstanceState);
     void onSaveInstanceState(Bundle outState);
 

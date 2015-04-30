@@ -2,8 +2,16 @@ package com.shaubert.lifecycle.objects;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public interface LifecycleDispatcher {
+
+    boolean isAttached();
+
+    void dispatchOnAttach();
+
+    void dispatchOnDetach();
 
     void dispatchOnResume();
 
@@ -13,8 +21,8 @@ public interface LifecycleDispatcher {
 
     void dispatchOnActivityResult(int requestCode, int resultCode, Intent data);
 
-    void dispatchOnCreate(Bundle savedInstanceState);
+    void dispatchOnCreate(@Nullable Bundle savedInstanceState);
 
-    void dispatchOnSaveInstanceState(Bundle outState);
+    void dispatchOnSaveInstanceState(@NonNull Bundle outState);
 
 }

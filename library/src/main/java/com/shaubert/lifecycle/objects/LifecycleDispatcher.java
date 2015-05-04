@@ -15,7 +15,10 @@ public interface LifecycleDispatcher {
 
     void dispatchOnResume();
 
+    @Deprecated
     void dispatchOnPause();
+
+    void dispatchOnPause(boolean isFinishing);
 
     boolean isPaused();
 

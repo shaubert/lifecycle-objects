@@ -32,7 +32,7 @@ public abstract class LifecycleDispatcherFragment extends Fragment implements Li
     @Override
     public void onPause() {
         super.onPause();
-        objectsGroup.dispatchOnPause();
+        objectsGroup.dispatchOnPause(isRemoving() || getActivity().isFinishing());
     }
 
     @Override

@@ -8,7 +8,7 @@ Create objects with callbacks from activity lifecycle.
         maven{url "https://github.com/shaubert/maven-repo/raw/master/releases"}
     }
     dependencies {
-        compile 'com.shaubert.lifecycle.objects:library:1.1'
+        compile 'com.shaubert.lifecycle.objects:library:1.2'
     }
 
 
@@ -48,7 +48,7 @@ After than you have to register your class instance in `LifecycleDelegate` with 
       @Override
       protected void onPause() {
           super.onPause();
-          lifecycleObjectsGroup.dispatchOnPause();
+          lifecycleObjectsGroup.dispatchOnPause(isFinishing());
       }
   
       @Override
@@ -79,6 +79,6 @@ Now your class can handle this methods from activity/fragment
     void onPostCreate(Bundle savedInstanceState) / onActivityCreated(Bundle savedInstanceState);
     void onActivityResult(int requestCode, int resultCode, Intent data);
     void onResume();
-    void onPause();
+    void onPause(boolean isFinishing);
     void onSaveInstanceState(Bundle outState);
 

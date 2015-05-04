@@ -35,7 +35,7 @@ public abstract class LifecycleDispatcherActivity extends Activity implements Li
     @Override
     protected void onPause() {
         super.onPause();
-        lifecycleObjectsGroup.dispatchOnPause();
+        lifecycleObjectsGroup.dispatchOnPause(isFinishing());
     }
 
     @Override

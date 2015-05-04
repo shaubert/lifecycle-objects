@@ -44,6 +44,11 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
         }
     }
 
+    @Override
+    public void dispatchOnPause() {
+        dispatchOnPause(false);
+    }
+
     protected void onResume() {
     }
 
@@ -61,14 +66,19 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
     }
 
     @Override
-    public final void dispatchOnPause() {
+    public final void dispatchOnPause(boolean isFinishing) {
         if (!paused) {
             paused = true;
             onPause();
+            onPause(isFinishing);
         }
     }
 
+    @Deprecated
     protected void onPause() {
+    }
+
+    protected void onPause(boolean isFinishing) {
     }
 
     @Override

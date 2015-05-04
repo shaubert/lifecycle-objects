@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class LifecycleObjectsGroup extends LifecycleBasedObject implements LifecycleDelegate {
 
-    private Set<LifecycleDispatcher> children = new HashSet<LifecycleDispatcher>();
+    private Set<LifecycleDispatcher> children = new HashSet<>();
     private Bundle savedState;
     private boolean onCreateCalled;
 
@@ -50,7 +50,7 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     public void detachFromLifecycle(LifecycleDispatcher object) {
         if (children.remove(object)) {
             if (!object.isPaused()) {
-                object.dispatchOnPause();
+                object.dispatchOnPause(false);
             }
             object.dispatchOnDetach();
         }
@@ -91,10 +91,10 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause(boolean isFinishing) {
         ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
         for (LifecycleDispatcher object : temp) {
-            object.dispatchOnPause();
+            object.dispatchOnPause(isFinishing);
         }
 
         throwIfHaveNotPausedChild();

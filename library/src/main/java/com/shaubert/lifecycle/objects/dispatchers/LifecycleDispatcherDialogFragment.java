@@ -32,7 +32,7 @@ public abstract class LifecycleDispatcherDialogFragment extends DialogFragment i
     @Override
     public void onPause() {
         super.onPause();
-        objectsGroup.dispatchOnPause();
+        objectsGroup.dispatchOnPause(isRemoving() || getActivity().isFinishing());
     }
 
     @Override

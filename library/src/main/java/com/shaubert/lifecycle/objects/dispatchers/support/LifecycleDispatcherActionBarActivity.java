@@ -34,7 +34,7 @@ public abstract class LifecycleDispatcherActionBarActivity extends ActionBarActi
     @Override
     protected void onPause() {
         super.onPause();
-        lifecycleObjectsGroup.dispatchOnPause();
+        lifecycleObjectsGroup.dispatchOnPause(isFinishing());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.shaubert.lifecycle.objects;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -13,7 +14,9 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
 
     private Set<LifecycleDispatcher> children = new HashSet<>();
     private Bundle savedState;
+    private PersistableBundle persistedState;
     private boolean onCreateCalled;
+    private boolean started;
 
     @Override
     public void attachToLifecycle(LifecycleDispatcher object) {
@@ -28,7 +31,11 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
                 }
 
                 if (onCreateCalled) {
-                    object.dispatchOnCreate(savedState);
+                    object.dispatchOnCreate(savedState, persistedState);
+                }
+
+                if (started) {
+                    object.dispatchOnStart();
                 }
 
                 if (!isPaused()) {
@@ -72,19 +79,29 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle state) {
+    protected void onCreate(@Nullable Bundle state, @Nullable PersistableBundle persistentState) {
         savedState = state;
+        persistedState = persistentState;
         onCreateCalled = true;
 
-        ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
-            object.dispatchOnCreate(state);
+            object.dispatchOnCreate(state, persistentState);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        started = true;
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
+        for (LifecycleDispatcher object : temp) {
+            object.dispatchOnStart();
         }
     }
 
     @Override
     protected void onResume() {
-        ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
             object.dispatchOnResume();
         }
@@ -92,7 +109,7 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
 
     @Override
     protected void onPause(boolean isFinishing) {
-        ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
             object.dispatchOnPause(isFinishing);
         }
@@ -101,10 +118,35 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     }
 
     @Override
+    protected void onStop(boolean isFinishing) {
+        started = false;
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
+        for (LifecycleDispatcher object : temp) {
+            object.dispatchOnStop(isFinishing);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
+        for (LifecycleDispatcher object : temp) {
+            object.dispatchOnDestroy();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
             object.dispatchOnActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
+        for (LifecycleDispatcher object : temp) {
+            object.dispatchOnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -118,10 +160,17 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        ArrayList<LifecycleDispatcher> temp = new ArrayList<LifecycleDispatcher>(children);
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
             object.dispatchOnSaveInstanceState(outState);
         }
     }
 
+    @Override
+    protected void onSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+        ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
+        for (LifecycleDispatcher object : temp) {
+            object.dispatchOnSavePersistentState(outPersistentState);
+        }
+    }
 }

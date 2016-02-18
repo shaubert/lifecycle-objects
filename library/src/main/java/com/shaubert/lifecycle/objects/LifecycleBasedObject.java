@@ -1,7 +1,9 @@
 package com.shaubert.lifecycle.objects;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -36,17 +38,58 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
     }
 
     @Override
+    @SuppressLint("NewApi")
+    public final void dispatchOnCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        Bundle stateBundle = null;
+        if (savedInstanceState != null) {
+            stateBundle = savedInstanceState.getBundle(getBundleTag());
+        }
+
+        PersistableBundle persistentStateBundle = null;
+        if (persistentState != null) {
+            persistentStateBundle = persistentState.getPersistableBundle(getBundleTag());
+        }
+
+        onCreate(stateBundle, persistentStateBundle);
+        onCreate(stateBundle);
+
+        if (persistentStateBundle != null) {
+            onRestorePersistentState(persistentStateBundle);
+        }
+
+        if (stateBundle != null) {
+            onRestoreInstanceState(stateBundle);
+        }
+    }
+
+    protected void onRestorePersistentState(@NonNull PersistableBundle persistentState) {
+    }
+
+    protected void onRestoreInstanceState(@NonNull Bundle state) {
+    }
+
+    protected void onCreate(@Nullable Bundle state) {
+    }
+
+    protected void onCreate(@Nullable Bundle state, @Nullable PersistableBundle persistentState) {
+    }
+
+    @Override
+    public final void dispatchOnStart() {
+        onStart();
+    }
+
+    protected void onStart() {
+
+    }
+
+    @Override
     public final void dispatchOnResume() {
         if (paused) {
             paused = false;
 
             onResume();
         }
-    }
-
-    @Override
-    public void dispatchOnPause() {
-        dispatchOnPause(false);
     }
 
     protected void onResume() {
@@ -66,49 +109,61 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
     }
 
     @Override
+    public final void dispatchOnRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    }
+
+    @Override
     public final void dispatchOnPause(boolean isFinishing) {
         if (!paused) {
             paused = true;
-            onPause();
             onPause(isFinishing);
         }
     }
 
-    @Deprecated
-    protected void onPause() {
+    @Override
+    public void dispatchOnSaveInstanceState(@NonNull Bundle outState) {
+        Bundle bundle = new Bundle();
+        onSaveInstanceState(bundle);
+        outState.putBundle(getBundleTag(), bundle);
+    }
+
+    @Override
+    @SuppressLint("NewApi")
+    public void dispatchOnSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+        PersistableBundle persistableBundle = new PersistableBundle();
+        onSavePersistentState(persistableBundle);
+        outPersistentState.putPersistableBundle(getBundleTag(), persistableBundle);
+    }
+
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    }
+
+    protected void onSavePersistentState(@NonNull PersistableBundle outPersistentState) {
     }
 
     protected void onPause(boolean isFinishing) {
     }
 
     @Override
-    public final void dispatchOnCreate(@Nullable Bundle savedInstanceState) {
-        Bundle stateBundle = null;
-        if (savedInstanceState != null) {
-            stateBundle = savedInstanceState.getBundle(getBundleTag());
-        }
-
-        onCreate(stateBundle);
-        if (stateBundle != null) {
-            onRestoreInstanceState(stateBundle);
-        }
+    public final void dispatchOnStop(boolean isFinishing) {
+        onStop(isFinishing);
     }
 
-    protected void onRestoreInstanceState(@NonNull Bundle state) {
-    }
-
-    protected void onCreate(@Nullable Bundle state) {
+    protected void onStop(boolean isFinishing) {
     }
 
     @Override
-    public final void dispatchOnSaveInstanceState(@NonNull Bundle outState) {
-        Bundle bundle = new Bundle();
-        onSaveInstanceState(bundle);
-        outState.putBundle(getBundleTag(), bundle);
+    public final void dispatchOnDestroy() {
+        onDestroy();
     }
 
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    protected void onDestroy() {
     }
+
 
     protected String getBundleTag() {
         return getClass().getSimpleName();

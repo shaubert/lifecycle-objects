@@ -1,27 +1,39 @@
-package com.shaubert.lifecycle.objects.dispatchers;
+package com.shaubert.lifecycle.objects.dispatchers.support;
 
-import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
+import com.shaubert.lifecycle.objects.dispatchers.LifecycleCoreDelegate;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public abstract class LifecycleDispatcherFragment extends Fragment implements LifecycleDelegate {
 
+public abstract class LifecycleDispatcherAppCompatActivity extends AppCompatActivity implements LifecycleDelegate {
+
+    private boolean ignoreCreate;
+    private boolean ignoreSaveInstanceState;
     private LifecycleCoreDelegate lifecycleCoreDelegate = new LifecycleCoreDelegate(this);
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        lifecycleCoreDelegate.dispatchOnActivityCreated(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!ignoreCreate) {
+            lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, null);
+        }
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        ignoreCreate = true;
+        super.onCreate(savedInstanceState, persistentState);
+        ignoreCreate = false;
+        lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, persistentState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         lifecycleCoreDelegate.dispatchOnActivityResult(requestCode, resultCode, data);
     }
@@ -33,39 +45,49 @@ public abstract class LifecycleDispatcherFragment extends Fragment implements Li
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         lifecycleCoreDelegate.dispatchOnStart();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onResumeFragments() {
+        super.onResumeFragments();
         lifecycleCoreDelegate.dispatchOnResume();
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         lifecycleCoreDelegate.dispatchOnPause();
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         lifecycleCoreDelegate.dispatchOnStop();
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         lifecycleCoreDelegate.dispatchOnDestroy();
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
+        if (!ignoreSaveInstanceState) {
+            lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        ignoreSaveInstanceState = true;
+        super.onSaveInstanceState(outState, outPersistentState);
+        ignoreSaveInstanceState = false;
+        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, outPersistentState);
     }
 
     @Override

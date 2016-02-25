@@ -2,7 +2,6 @@ package com.shaubert.lifecycle.objects;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -14,7 +13,7 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
 
     private Set<LifecycleDispatcher> children = new HashSet<>();
     private Bundle savedState;
-    private PersistableBundle persistedState;
+    private Object persistedState;
     private boolean onCreateCalled;
     private boolean started;
 
@@ -79,14 +78,14 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle state, @Nullable PersistableBundle persistentState) {
+    protected void onCreate(@Nullable Bundle state, @Nullable Object persistableBundle) {
         savedState = state;
-        persistedState = persistentState;
+        persistedState = persistableBundle;
         onCreateCalled = true;
 
         ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
-            object.dispatchOnCreate(state, persistentState);
+            object.dispatchOnCreate(state, persistableBundle);
         }
     }
 
@@ -167,10 +166,10 @@ public class LifecycleObjectsGroup extends LifecycleBasedObject implements Lifec
     }
 
     @Override
-    protected void onSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+    protected void onSavePersistentState(@NonNull Object persistableBundle) {
         ArrayList<LifecycleDispatcher> temp = new ArrayList<>(children);
         for (LifecycleDispatcher object : temp) {
-            object.dispatchOnSavePersistentState(outPersistentState);
+            object.dispatchOnSavePersistentState(persistableBundle);
         }
     }
 }

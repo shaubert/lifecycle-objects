@@ -2,6 +2,7 @@ package com.shaubert.lifecycle.objects;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -39,17 +40,18 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
 
     @Override
     @SuppressLint("NewApi")
-    public final void dispatchOnCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+    public final void dispatchOnCreate(@Nullable Bundle savedInstanceState, @Nullable Object persistableBundle) {
         Bundle stateBundle = null;
         if (savedInstanceState != null) {
             stateBundle = savedInstanceState.getBundle(getBundleTag());
         }
 
-        PersistableBundle persistentStateBundle = null;
-        if (persistentState != null) {
-            persistentStateBundle = persistentState.getPersistableBundle(getBundleTag());
+        Object persistentStateBundle = null;
+        if (Build.VERSION.SDK_INT >= 21) {
+            if (persistableBundle instanceof PersistableBundle) {
+                persistentStateBundle = ((PersistableBundle)persistableBundle).getPersistableBundle(getBundleTag());
+            }
         }
-
         onCreate(stateBundle, persistentStateBundle);
         onCreate(stateBundle);
 
@@ -62,7 +64,7 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
         }
     }
 
-    protected void onRestorePersistentState(@NonNull PersistableBundle persistentState) {
+    protected void onRestorePersistentState(@NonNull Object persistableBundle) {
     }
 
     protected void onRestoreInstanceState(@NonNull Bundle state) {
@@ -71,7 +73,7 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
     protected void onCreate(@Nullable Bundle state) {
     }
 
-    protected void onCreate(@Nullable Bundle state, @Nullable PersistableBundle persistentState) {
+    protected void onCreate(@Nullable Bundle state, @Nullable Object persistableBundle) {
     }
 
     @Override
@@ -133,16 +135,16 @@ public class LifecycleBasedObject implements LifecycleDispatcher {
 
     @Override
     @SuppressLint("NewApi")
-    public void dispatchOnSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+    public void dispatchOnSavePersistentState(@NonNull Object outPersistableBundle) {
         PersistableBundle persistableBundle = new PersistableBundle();
         onSavePersistentState(persistableBundle);
-        outPersistentState.putPersistableBundle(getBundleTag(), persistableBundle);
+        ((PersistableBundle)outPersistableBundle).putPersistableBundle(getBundleTag(), persistableBundle);
     }
 
     protected void onSaveInstanceState(@NonNull Bundle outState) {
     }
 
-    protected void onSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+    protected void onSavePersistentState(@NonNull Object outPersistableBundle) {
     }
 
     protected void onPause(boolean isFinishing) {

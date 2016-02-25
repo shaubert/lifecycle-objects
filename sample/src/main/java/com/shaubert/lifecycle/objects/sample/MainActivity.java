@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.shaubert.lifecycle.objects.LifecycleBasedObject;
+import com.shaubert.lifecycle.objects.LifecycleObjectsGroup;
 import com.shaubert.lifecycle.objects.dispatchers.support.LifecycleDispatcherAppCompatActivity;
 
 public class MainActivity extends LifecycleDispatcherAppCompatActivity {
@@ -22,6 +23,10 @@ public class MainActivity extends LifecycleDispatcherAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.ab_toolbar));
+
+        getClass().getMethods();
+        LoggingObject.class.getMethods();
+        LifecycleObjectsGroup.class.getMethods();
 
         attachToLifecycle(new LoggingObject((TextView) findViewById(R.id.text_view)));
     }
@@ -73,7 +78,7 @@ public class MainActivity extends LifecycleDispatcherAppCompatActivity {
         }
 
         @Override
-        protected void onRestorePersistentState(@NonNull PersistableBundle persistentState) {
+        protected void onRestorePersistentState(@NonNull Object persistableBundle) {
             textView.append("\nonRestorePersistentState()");
         }
 
@@ -89,12 +94,12 @@ public class MainActivity extends LifecycleDispatcherAppCompatActivity {
 
         @Override
         @SuppressLint("NewApi")
-        protected void onCreate(@Nullable Bundle state, @Nullable PersistableBundle persistentState) {
+        protected void onCreate(@Nullable Bundle state, @Nullable Object persistableBundle) {
             String oldState = null;
             if (state != null) {
                 oldState = state.getString("state");
-            } else if (persistentState != null) {
-                oldState = persistentState.getString("state");
+            } else if (persistableBundle != null) {
+                oldState = ((PersistableBundle) persistableBundle).getString("state");
             }
             if (oldState != null) {
                 textView.append("\n--- restored state ----");
@@ -132,9 +137,9 @@ public class MainActivity extends LifecycleDispatcherAppCompatActivity {
 
         @Override
         @SuppressLint("NewApi")
-        protected void onSavePersistentState(@NonNull PersistableBundle outPersistentState) {
+        protected void onSavePersistentState(@NonNull Object persistableBundle) {
             textView.append("\nonSavePersistentState()");
-            outPersistentState.putString("state", textView.getText().toString());
+            ((PersistableBundle) persistableBundle).putString("state", textView.getText().toString());
         }
 
         @Override

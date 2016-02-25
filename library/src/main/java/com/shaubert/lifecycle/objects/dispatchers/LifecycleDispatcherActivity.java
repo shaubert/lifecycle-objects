@@ -3,7 +3,6 @@ package com.shaubert.lifecycle.objects.dispatchers;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
@@ -11,24 +10,12 @@ import com.shaubert.lifecycle.objects.LifecycleDispatcher;
 
 public abstract class LifecycleDispatcherActivity extends Activity implements LifecycleDelegate {
 
-    private boolean ignoreCreate;
-    private boolean ignoreSaveInstanceState;
     private LifecycleCoreDelegate lifecycleCoreDelegate = new LifecycleCoreDelegate(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!ignoreCreate) {
-            lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, null);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        ignoreCreate = true;
-        super.onCreate(savedInstanceState, persistentState);
-        ignoreCreate = false;
-        lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, persistentState);
+        lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, null);
     }
 
     @Override
@@ -76,17 +63,7 @@ public abstract class LifecycleDispatcherActivity extends Activity implements Li
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (!ignoreSaveInstanceState) {
-            lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        ignoreSaveInstanceState = true;
-        super.onSaveInstanceState(outState, outPersistentState);
-        ignoreSaveInstanceState = false;
-        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, outPersistentState);
+        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
     }
 
     @Override

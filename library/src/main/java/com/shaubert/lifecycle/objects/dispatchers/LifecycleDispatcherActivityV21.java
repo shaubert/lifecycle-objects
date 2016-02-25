@@ -1,22 +1,34 @@
-package com.shaubert.lifecycle.objects.dispatchers.support;
+package com.shaubert.lifecycle.objects.dispatchers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
-import com.shaubert.lifecycle.objects.dispatchers.LifecycleCoreDelegate;
 
 
-public abstract class LifecycleDispatcherAppCompatActivity extends AppCompatActivity implements LifecycleDelegate {
+public abstract class LifecycleDispatcherActivityV21 extends Activity implements LifecycleDelegate {
 
+    private boolean ignoreCreate;
+    private boolean ignoreSaveInstanceState;
     private LifecycleCoreDelegate lifecycleCoreDelegate = new LifecycleCoreDelegate(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, null);
+        if (!ignoreCreate) {
+            lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, null);
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        ignoreCreate = true;
+        super.onCreate(savedInstanceState, persistentState);
+        ignoreCreate = false;
+        lifecycleCoreDelegate.dispatchOnCreate(savedInstanceState, persistentState);
     }
 
     @Override
@@ -38,8 +50,8 @@ public abstract class LifecycleDispatcherAppCompatActivity extends AppCompatActi
     }
 
     @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
+    protected void onResume() {
+        super.onResume();
         lifecycleCoreDelegate.dispatchOnResume();
     }
 
@@ -64,7 +76,17 @@ public abstract class LifecycleDispatcherAppCompatActivity extends AppCompatActi
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
+        if (!ignoreSaveInstanceState) {
+            lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, null);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        ignoreSaveInstanceState = true;
+        super.onSaveInstanceState(outState, outPersistentState);
+        ignoreSaveInstanceState = false;
+        lifecycleCoreDelegate.dispatchOnSaveInstanceState(outState, outPersistentState);
     }
 
     @Override

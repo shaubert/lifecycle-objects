@@ -6,12 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class LifecycleObjectsGroup extends LifecycleBasedObject implements LifecycleDelegate {
 
-    private Set<LifecycleDispatcher> children = new HashSet<>();
+    private Set<LifecycleDispatcher> children = new LinkedHashSet<>();
     private Bundle savedState;
     private Object persistedState;
     private boolean onCreateCalled;

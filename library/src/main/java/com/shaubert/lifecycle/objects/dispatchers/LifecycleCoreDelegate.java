@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LifecycleObjectsFragmentHelper;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
 import com.shaubert.lifecycle.objects.LifecycleObjectsGroup;
@@ -18,7 +19,6 @@ public class LifecycleCoreDelegate implements LifecycleDelegate {
 
     private Activity activity;
     private Fragment supportFragment;
-    private android.app.Fragment fragment;
 
     public LifecycleCoreDelegate(Object activityOrFragment) {
         if (activityOrFragment == null) throw new NullPointerException();
@@ -26,8 +26,6 @@ public class LifecycleCoreDelegate implements LifecycleDelegate {
             this.activity = (Activity) activityOrFragment;
         } else if (activityOrFragment instanceof Fragment) {
             this.supportFragment = (Fragment) activityOrFragment;
-        } else if (activityOrFragment instanceof android.app.Fragment) {
-            this.fragment = (android.app.Fragment) activityOrFragment;
         } else {
             throw new IllegalArgumentException("Must be Activity or Fragment but: " + activityOrFragment);
         }
@@ -77,11 +75,8 @@ public class LifecycleCoreDelegate implements LifecycleDelegate {
         if (activity != null) {
             return activity.isFinishing();
         } else if (supportFragment != null) {
-            return supportFragment.isRemoving()
+            return (!LifecycleObjectsFragmentHelper.isInBackStack(supportFragment) && supportFragment.isRemoving())
                     || (supportFragment.getActivity() != null && supportFragment.getActivity().isFinishing());
-        } else if (fragment != null) {
-            return fragment.isRemoving()
-                    || (fragment.getActivity() != null && fragment.getActivity().isFinishing());
         }
         return false;
     }

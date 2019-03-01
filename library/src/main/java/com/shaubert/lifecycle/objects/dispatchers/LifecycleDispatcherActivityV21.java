@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.shaubert.lifecycle.objects.LifecycleDelegate;
 import com.shaubert.lifecycle.objects.LifecycleDispatcher;
 

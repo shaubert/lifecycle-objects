@@ -1,6 +1,6 @@
 package com.shaubert.lifecycle.objects.sample;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class TestAcitivity extends AppCompatActivity {
 
